@@ -1,3 +1,0 @@
-[setup]
-# Commands that will be run once at the start of the build process.
-setup = "bash setup.sh"
