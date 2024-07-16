@@ -3,7 +3,7 @@ import torch
 import numpy as np
 import cv2
 from PIL import Image
-import tempfile  # Added for temporary file handling
+import tempfile
 
 # Function to load YOLOv8 model based on model name
 def load_model(model_name):
