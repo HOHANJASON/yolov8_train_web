@@ -1,11 +1,8 @@
 import streamlit as st
 import torch
-import numpy as np
-import cv2
-from PIL import Image
-import tempfile
 
-# Function to load YOLOv8 model based on model name
+# 使用st.cache装饰器缓存函数结果
+@st.cache(allow_output_mutation=True)
 def load_model(model_name):
     try:
         if model_name == 'yolov8n':
@@ -15,7 +12,7 @@ def load_model(model_name):
         elif model_name == 'yolov8x':
             return torch.hub.load('ultralytics/yolov5', 'yolov5x', pretrained=True)
         else:
-            return torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)  # Default to yolov5s if model_name is invalid
+            return torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)  # 默认使用 yolov5s
     except Exception as e:
         st.error(f"模型加载失败：{e}")
         return None
