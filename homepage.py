@@ -17,16 +17,16 @@ def load_model(model_name):
         else:
             return torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)  # Default to yolov5s if model_name is invalid
     except Exception as e:
-        st.error(f"模型加载失败：{e}")
+        st.error(f"模型加載失敗：{e}")
         return None
 
 # Streamlit UI
 def main():
-    st.title("YOLOv8 物体检测")
-    st.write("上传图像或视频，或使用网络摄像头进行 YOLOv8 物体检测。")
+    st.title("YOLOv8 物體檢測")
+    st.write("上傳圖片或影片，或使用網路攝像頭進行 YOLOv8 物體檢測。")
 
     # Model selection
-    model_name = st.selectbox("选择模型", ('yolov8n', 'yolov8m', 'yolov8x', 'yolov8s'))
+    model_name = st.selectbox("選擇模型", ('yolov8n', 'yolov8m', 'yolov8x', 'yolov8s'))
 
     # 加载YOLOv8模型
     model = load_model(model_name)
@@ -65,7 +65,7 @@ def main():
                     # 使用YOLOv8模型进行检测
                     processed_image = process_frame(image_np, model, show_confidence, confidence_font_size)
 
-                    st.image(processed_image, caption="检测结果", use_column_width=True)  # 默认显示彩色图像
+                    st.image(processed_image, caption="檢測結果", use_column_width=True)  # 默认显示彩色图像
 
                 elif uploaded_file.type == "video/mp4":
                     tfile = tempfile.NamedTemporaryFile(delete=False)
@@ -95,7 +95,7 @@ def main():
                     while True:
                         ret, frame = cap.read()
                         if not ret:
-                            st.error("无法从网络摄像头读取数据。")
+                            st.error("無法從網路設想頭讀取資料。")
                             break
 
                         # 使用YOLOv8模型进行检测
@@ -103,7 +103,7 @@ def main():
 
                         stframe.image(processed_frame, channels="BGR")
 
-                        if st.button('停止摄像头'):
+                        if st.button('停止攝像頭'):
                             break
 
                     cap.release()
