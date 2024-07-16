@@ -17,33 +17,33 @@ def load_model(model_name):
         else:
             return torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)  # Default to yolov5s if model_name is invalid
     except Exception as e:
-        st.error(f"Error loading YOLOv8 model: {e}")
+        st.error(f"模型加载失败：{e}")
         return None
 
 # Streamlit UI
 def main():
-    st.title("YOLOv8 物件偵測")
-    st.write("上傳圖像或影片，或使用網絡攝像頭進行 YOLOv8 物件偵測。")
+    st.title("YOLOv8 物体检测")
+    st.write("上传图像或视频，或使用网络摄像头进行 YOLOv8 物体检测。")
 
     # Model selection
-    model_name = st.selectbox("選擇模型", ('yolov8s', 'yolov8n', 'yolov8m', 'yolov8x'))
+    model_name = st.selectbox("选择模型", ('yolov8n', 'yolov8m', 'yolov8x', 'yolov8s'))
 
-    # 加載YOLOv8模型
+    # 加载YOLOv8模型
     model = load_model(model_name)
 
     if model is None:
-        st.error("模型加載失敗。請檢查日誌以了解詳細信息。")
+        st.error("模型加载失败。请检查日志以获取详细信息。")
         return
 
     # Bounding box settings
-    show_confidence = st.checkbox("顯示信心值", value=True)
-    confidence_font_size = st.slider("信心值字體大小", min_value=0.5, max_value=2.0, step=0.1, value=0.5)
+    show_confidence = st.checkbox("显示置信度", value=True)
+    confidence_font_size = st.slider("置信度字体大小", min_value=0.5, max_value=2.0, step=0.1, value=0.5)
 
-    # 上傳圖像或影片
-    uploaded_file = st.file_uploader("選擇圖像或影片...", type=["jpg", "jpeg", "png", "mp4"])
+    # 上传图像或视频
+    uploaded_file = st.file_uploader("选择图像或视频...", type=["jpg", "jpeg", "png", "mp4"])
 
-    # 選擇使用網絡攝像頭
-    use_webcam = st.checkbox("使用網絡攝像頭")
+    # 使用网络摄像头
+    use_webcam = st.checkbox("使用网络摄像头")
 
     # Function to process frames for detection
     def process_frame(frame, model, show_confidence, confidence_font_size):
@@ -56,16 +56,16 @@ def main():
         return frame
 
     if uploaded_file is not None or use_webcam:
-        if st.button('進行推導'):
+        if st.button('开始检测'):
             if uploaded_file is not None:
                 if uploaded_file.type in ["image/jpg", "image/jpeg", "image/png"]:
                     image = Image.open(uploaded_file)
                     image_np = np.array(image)
 
-                    # 使用YOLOv8模型進行推導
+                    # 使用YOLOv8模型进行检测
                     processed_image = process_frame(image_np, model, show_confidence, confidence_font_size)
 
-                    st.image(processed_image, caption="檢測結果", use_column_width=True)  # 默认显示彩色图像
+                    st.image(processed_image, caption="检测结果", use_column_width=True)  # 默认显示彩色图像
 
                 elif uploaded_file.type == "video/mp4":
                     tfile = tempfile.NamedTemporaryFile(delete=False)
@@ -79,7 +79,7 @@ def main():
                         if not ret:
                             break
 
-                        # 使用YOLOv8模型進行推導
+                        # 使用YOLOv8模型进行检测
                         processed_frame = process_frame(frame, model, show_confidence, confidence_font_size)
 
                         stframe.image(processed_frame, channels="BGR")  # 默认显示彩色视频帧
@@ -90,20 +90,20 @@ def main():
                 stframe = st.empty()
 
                 if not cap.isOpened():
-                    st.write("無法訪問網絡攝像頭。請檢查是否已經允許訪問攝像頭，或重啟瀏覽器並嘗試使用其他瀏覽器。")
+                    st.error("无法访问网络摄像头。请确保已允许访问摄像头，并尝试重新启动浏览器或使用其他浏览器。")
                 else:
                     while True:
                         ret, frame = cap.read()
                         if not ret:
-                            st.write("無法從網絡攝像頭讀取數據。")
+                            st.error("无法从网络摄像头读取数据。")
                             break
 
-                        # 使用YOLOv8模型進行推導
+                        # 使用YOLOv8模型进行检测
                         processed_frame = process_frame(frame, model, show_confidence, confidence_font_size)
 
                         stframe.image(processed_frame, channels="BGR")
 
-                        if st.button('停止攝像頭'):
+                        if st.button('停止摄像头'):
                             break
 
                     cap.release()
