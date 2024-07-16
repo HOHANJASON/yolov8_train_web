@@ -1,1 +1,8 @@
 opencv-python-headless
+streamlit
+torch
+torchvision
+torchaudio
+opencv-python
+Pillow
+numpy
